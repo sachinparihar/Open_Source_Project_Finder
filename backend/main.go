@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/sachinparihar/Open_Source_Project_Finder/config"
 	"github.com/sachinparihar/Open_Source_Project_Finder/internal/auth"
 )
@@ -13,6 +14,11 @@ import (
 const address = "localhost:8080"
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	config := &config.Config{
 		GithubClientID:     os.Getenv("GITHUB_CLIENT_ID"),
 		GithubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
@@ -37,7 +43,7 @@ func main() {
 	}
 
 	log.Printf("Server running on %s\n", address)
-	err := http.ListenAndServe(address, auth.NewRouter(config))
+	err = http.ListenAndServe(address, auth.NewServer(config))
 	if err != nil {
 		log.Fatal("Error starting server:", err)
 	}

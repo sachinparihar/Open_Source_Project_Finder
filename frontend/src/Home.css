@@ -1,0 +1,22 @@
+.home-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.login-button {
+  display: inline-block;
+  font-size: 20px;
+  text-decoration: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.login-button.github {
+  background-color: #24292e;
+}
+
+.login-button.google {
+  background-color: #4285F4;
+}
