@@ -2,8 +2,8 @@ package auth
 
 import (
 	"fmt"
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/dghubble/gologin/v2"
 	"github.com/dghubble/gologin/v2/github"
@@ -27,23 +27,23 @@ func RegisterGitHubRoutes(mux *http.ServeMux, cfg *config.Config) {
 	mux.Handle("/github/callback", github.StateHandler(stateConfig, github.CallbackHandler(oauth2Config, issueGitHubSession(), nil)))
 }
 
-// profileHandler shows a personal profile or a login button (unauthenticated)
+// githubProfileHandler shows a personal profile or a login button (unauthenticated)
 func profileHandler(w http.ResponseWriter, req *http.Request) {
-	session, err := sessions.Store.Get(req, sessions.SessionName)
+	session, err := sessions.Store.Get(req, "example-github-app")
 	if err != nil || session == nil {
-		// Show welcome page with login button
-		page, _ := os.ReadFile("static/home.html")
-		fmt.Fprint(w, string(page))
+		log.Printf("Error retrieving session: %v", err)
+		http.Error(w, "Not authenticated", http.StatusUnauthorized)
 		return
 	}
 
-	// Authenticated user profile
-	username := session.Get(sessions.SessionUsername)
+	username := session.Get("username")
 	if username == nil {
-		http.Redirect(w, req, "/github/login", http.StatusFound)
+		log.Printf("No username in session")
+		http.Error(w, "Not authenticated", http.StatusUnauthorized)
 		return
 	}
-	fmt.Fprintf(w, `<p>You are logged in as %s!</p><form action="/logout" method="post"><input type="submit" value="Logout"></form>`, username)
+
+	fmt.Fprintf(w, `{"username": "%s"}`, username)
 }
 
 // logoutHandler destroys the session on POSTs and redirects to the home page
@@ -61,19 +61,26 @@ func issueGitHubSession() http.Handler {
 		githubUser, err := github.UserFromContext(ctx)
 		if err != nil {
 			http.Error(w, "Failed to get user from GitHub", http.StatusInternalServerError)
+			log.Printf("Error getting user from GitHub: %v", err)
 			return
 		}
 
 		// Create and save the session
-		session := sessions.Store.New(sessions.SessionName)
-		session.Set(sessions.SessionUserKey, *githubUser.ID)
-		session.Set(sessions.SessionUsername, *githubUser.Login)
+		session := sessions.Store.New("example-github-app")
+		session.Set("githubID", *githubUser.ID)
+		session.Set("username", *githubUser.Login)
 		if err := session.Save(w); err != nil {
 			http.Error(w, "Failed to save session", http.StatusInternalServerError)
+			log.Printf("Error saving session: %v", err)
 			return
 		}
 
-		http.Redirect(w, req, "/profile", http.StatusFound)
+		// Log session details for debugging
+		log.Printf("Session saved: %v", session)
+
+		// Redirect to the frontend root URL
+		http.Redirect(w, req, "http://localhost:5173/", http.StatusFound)
+		log.Printf("Redirecting to frontend: http://localhost:5173/")
 	}
 	return http.HandlerFunc(fn)
 }

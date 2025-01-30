@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/dghubble/gologin/v2"
@@ -29,20 +31,46 @@ func issueSession() http.Handler {
 		user, err := google.UserFromContext(ctx)
 		if err != nil {
 			http.Error(w, "Failed to get user from Google", http.StatusInternalServerError)
+			log.Printf("Error getting user from Google: %v", err)
 			return
 		}
 
 		session := sessionStore.New("example-google-app")
 		session.Set("googleID", user.Id)
 		session.Set("email", user.Email)
-		err = session.Save(w)
-		if err != nil {
+		if err := session.Save(w); err != nil {
 			http.Error(w, "Failed to save session", http.StatusInternalServerError)
+			log.Printf("Error saving session: %v", err)
 			return
 		}
-		http.Redirect(w, req, "/", http.StatusFound)
+
+		// Log session details for debugging
+		log.Printf("Session saved: %v", session)
+
+		// Redirect to the frontend root URL
+		http.Redirect(w, req, "http://localhost:5173/", http.StatusFound)
+		log.Printf("Redirecting to frontend: http://localhost:5173/")
 	}
 	return http.HandlerFunc(fn)
+}
+
+// googleProfileHandler shows a personal profile or a login button (unauthenticated)
+func googleProfileHandler(w http.ResponseWriter, req *http.Request) {
+	session, err := sessionStore.Get(req, "example-google-app")
+	if err != nil || session == nil {
+		log.Printf("Error retrieving session: %v", err)
+		http.Error(w, "Not authenticated", http.StatusUnauthorized)
+		return
+	}
+
+	email := session.Get("email")
+	if email == nil {
+		log.Printf("No email in session")
+		http.Error(w, "Not authenticated", http.StatusUnauthorized)
+		return
+	}
+
+	fmt.Fprintf(w, `{"email": "%s"}`, email)
 }
 
 // Register Google Routes
@@ -58,4 +86,5 @@ func RegisterGoogleRoutes(mux *http.ServeMux, cfg *config.Config) {
 	stateConfig := gologin.DebugOnlyCookieConfig
 	mux.Handle("/google/login", google.StateHandler(stateConfig, google.LoginHandler(oauth2Config, nil)))
 	mux.Handle("/google/callback", google.StateHandler(stateConfig, google.CallbackHandler(oauth2Config, issueSession(), nil)))
+	mux.HandleFunc("/google/profile", googleProfileHandler)
 }
