@@ -1,50 +1,51 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
-	"github.com/sachinparihar/Open_Source_Project_Finder/config"
-	"github.com/sachinparihar/Open_Source_Project_Finder/internal/auth"
+	"sachinparihar/Open_Source_Project_Finder/config"
+	"sachinparihar/Open_Source_Project_Finder/routes"
+
+	"github.com/gorilla/mux"
 )
 
-const address = "localhost:8080"
-
 func main() {
-	err := godotenv.Load()
+	// Load environment variables and config
+	err := config.LoadEnv()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatalf("Error loading environment: %v", err)
 	}
 
-	config := &config.Config{
-		GithubClientID:     os.Getenv("GITHUB_CLIENT_ID"),
-		GithubClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
-		GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+	// Initialize DB
+	db := config.ConnectDatabase()
+	sqlDB, _ := db.DB()
+	defer sqlDB.Close()
+
+	// Setup router
+	r := mux.NewRouter()
+
+	// Public routes (search etc.)
+	routes.RegisterPublicRoutes(r)
+
+	// Auth and protected routes
+	protected := r.PathPrefix("/api").Subrouter()
+	routes.RegisterAuthRoutes(protected)
+	routes.RegisterProfileRoutes(protected)
+	routes.RegisterBookmarkRoutes(protected)
+	routes.RegisterRecommendationRoutes(protected)
+
+	// Middleware: Add JWT verification
+	protected.Use(config.JWTMiddleware)
+
+	// Start server
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
 	}
 
-	clientID := flag.String("google-client-id", "", "Google Client ID")
-	clientSecret := flag.String("google-client-secret", "", "Google Client Secret")
-	flag.Parse()
-
-	if *clientID != "" {
-		config.GoogleClientID = *clientID
-	}
-	if *clientSecret != "" {
-		config.GoogleClientSecret = *clientSecret
-	}
-
-	if config.GithubClientID == "" || config.GithubClientSecret == "" ||
-		config.GoogleClientID == "" || config.GoogleClientSecret == "" {
-		log.Fatal("Missing OAuth credentials for GitHub or Google")
-	}
-
-	log.Printf("Server running on %s\n", address)
-	err = http.ListenAndServe(address, auth.NewServer(config))
-	if err != nil {
-		log.Fatal("Error starting server:", err)
-	}
+	fmt.Printf("Server running at http://localhost:%s\n", port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
