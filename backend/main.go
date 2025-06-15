@@ -1,51 +1,61 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"sachinparihar/Open_Source_Project_Finder/config"
+	"sachinparihar/Open_Source_Project_Finder/database"
 	"sachinparihar/Open_Source_Project_Finder/routes"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	// Load environment variables and config
-	err := config.LoadEnv()
-	if err != nil {
-		log.Fatalf("Error loading environment: %v", err)
-	}
+	config.LoadEnv()
+	database.InitMongoDB()
 
-	// Initialize DB
-	db := config.ConnectDatabase()
-	sqlDB, _ := db.DB()
-	defer sqlDB.Close()
-
-	// Setup router
 	r := mux.NewRouter()
+	routes.RegisterRoutes(r)
 
-	// Public routes (search etc.)
-	routes.RegisterPublicRoutes(r)
+	// CORS
+	corsHandler := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+	)(r)
 
-	// Auth and protected routes
-	protected := r.PathPrefix("/api").Subrouter()
-	routes.RegisterAuthRoutes(protected)
-	routes.RegisterProfileRoutes(protected)
-	routes.RegisterBookmarkRoutes(protected)
-	routes.RegisterRecommendationRoutes(protected)
-
-	// Middleware: Add JWT verification
-	protected.Use(config.JWTMiddleware)
-
-	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8000"
+		port = "8080"
+	}
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: corsHandler,
 	}
 
-	fmt.Printf("Server running at http://localhost:%s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, r))
+	// Graceful shutdown
+	idleConnsClosed := make(chan struct{})
+	go func() {
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+		<-sig
+		log.Println("Shutting down server...")
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		server.Shutdown(ctx)
+		close(idleConnsClosed)
+	}()
+
+	log.Printf("Server listening on :%s", port)
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatalf("Server error: %v", err)
+	}
+	<-idleConnsClosed
 }
