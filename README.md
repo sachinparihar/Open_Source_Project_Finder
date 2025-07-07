@@ -54,6 +54,11 @@ npm start
 ```
 Visit: http://localhost:3000
 
+
+![home](https://github.com/user-attachments/assets/ede87542-6669-43ca-ad17-27836a9db534)
+
+
+
 ## 📊 API Overview
 - `GET /api/projects` – Filter/search projects
 - `POST /api/recommend` – Personalized recommendations
