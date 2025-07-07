@@ -291,7 +291,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Sachin Parihar**
 - GitHub: [@sachinparihar](https://github.com/sachinparihar)
-- LinkedIn: [Sachin Parihar](https://linkedin.com/in/sachinparihar)
+- LinkedIn: [Sachin Parihar](https://linkedin.com/in/sachin-parihar-937b3b237/)
 
 ## 🙏 Acknowledgments
 
