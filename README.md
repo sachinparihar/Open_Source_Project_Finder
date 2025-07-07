@@ -1,5 +1,6 @@
 # Open Source Project Finder
-A platform that helps developers discover active, well-maintained open source projects tailored to their skills and interests. Features AI-powered recommendations, project activity scoring, and personalized matching to maximize successful contributions.
+
+A platform that helps developers discover active, well-maintained open source projects tailored to their skills and interests. Features AI-powered recommendations, project activity scoring, community health metrics, and personalized matching to maximize successful contributions.
 
 ## 🚀 Features
 - AI-Powered Recommendations
@@ -13,58 +14,253 @@ A platform that helps developers discover active, well-maintained open source pr
 - **Frontend:** React 19, Auth0, Axios, CSS
 - **Backend:** Go 1.24.2, Gorilla Mux, Azure Cosmos DB (MongoDB API), GitHub API, JWT
 
-## 📦 Prerequisites
-- Node.js v16+
-- Go v1.24+
-- Azure Cosmos DB or MongoDB v4.4+
-- Git
+## 📋 Prerequisites
 
-## 🔧 Setup Instructions
+Before running this project, make sure you have the following installed:
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/sachinparihar/Open_Source_Project_Finder.git
-   cd Open_Source_Project_Finder
-   ```
-2. **Backend Setup**
-   ```bash
-   cd backend
-   go mod tidy
-   cp .env.example .env
-   # Add MongoDB URI, GitHub Token, and CORS config in .env
-   ```
-3. **Frontend Setup**
-   ```bash
-   cd frontend
-   npm install
-   cp .env.example .env
-   # Add API URL, Auth0 domain, and client ID in .env
-   ```
+- **Node.js** (v16 or higher)
+- **npm** (comes with Node.js)
+- **Go** (v1.24 or higher)
+- **Azure Cosmos DB** (MongoDB API) or **MongoDB** (v4.4 or higher)
+- **Git**
 
-## ▶️ Running the App
-**Start Backend**
+## 🔧 Installation & Setup
+
+### 1. Clone the Repository
+
 ```bash
+git clone https://github.com/sachinparihar/Open_Source_Project_Finder.git
+cd Open_Source_Project_Finder
+```
+
+### 2. Backend Setup
+
+```bash
+# Navigate to backend directory
 cd backend
+
+# Install Go dependencies
+go mod tidy
+
+# Create .env file for environment variables
+cp .env.example .env
+# Edit .env file with your configuration
+```
+
+#### Environment Variables (.env)
+
+Create a `.env` file in the backend directory with the following variables:
+
+```env
+# Azure Cosmos DB MongoDB Configuration
+MONGODB_URI=your_cosmosdb_connection_string_here
+
+# GitHub API Configuration
+GITHUB_TOKEN=your_github_token_here
+
+# Server Configuration
+PORT=8080
+
+# CORS Configuration
+ALLOWED_ORIGINS=http://localhost:3000
+```
+
+#### Get GitHub Token
+
+1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
+2. Generate a new token with `repo` and `read:user` permissions
+3. Add the token to your `.env` file
+
+#### Setup Azure Cosmos DB
+
+1. Go to [Azure Portal](https://portal.azure.com/)
+2. Create a new Cosmos DB account with MongoDB API
+3. Create a database named `osproject_finder`
+4. Copy the connection string from the "Keys" section
+5. Copy the connection string and replace `your_cosmosdb_connection_string_here` in the .env file
+
+### 3. Frontend Setup
+
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Create .env file for environment variables
+cp .env.example .env
+# Edit .env file with your configuration
+```
+
+#### Environment Variables (.env)
+
+Create a `.env` file in the frontend directory with the following variables:
+
+```env
+# API Configuration
+REACT_APP_API_URL=http://localhost:8080
+
+# Auth0 Configuration
+REACT_APP_AUTH0_DOMAIN=your_auth0_domain
+REACT_APP_AUTH0_CLIENT_ID=your_auth0_client_id
+```
+
+#### Setup Auth0
+
+1. Create an account at [Auth0](https://auth0.com/)
+2. Create a new application (Single Page Application)
+3. Configure allowed callback URLs: `http://localhost:3000`
+4. Copy your domain and client ID to the `.env` file
+
+### 4. Database Setup
+
+#### Option 1: Azure Cosmos DB (Recommended)
+
+1. Create an Azure Cosmos DB account with MongoDB API
+2. Create a database named `osproject_finder`
+3. Get your connection string from Azure Portal
+4. Update the `MONGODB_URI` in your `.env` file
+
+#### Option 2: Local MongoDB
+
+```bash
+# Start MongoDB (if not running as a service)
+mongod
+
+# Or if using Docker
+docker run -d -p 27017:27017 --name mongodb mongo:latest
+```
+
+## 🚀 Running the Application
+
+### 1. Start the Backend Server
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Run the Go server
 go run main.go
 ```
-**Start Frontend**
+
+The backend server will start on `http://localhost:8080`
+
+### 2. Start the Frontend Application
+
 ```bash
+# Navigate to frontend directory
 cd frontend
+
+# Start the React development server
 npm start
 ```
-Visit: http://localhost:3000
 
+The frontend application will start on `http://localhost:3000`
 
-![home](https://github.com/user-attachments/assets/ede87542-6669-43ca-ad17-27836a9db534)
+### 3. Access the Application
 
+Open your browser and navigate to `http://localhost:3000`
 
+## 🔄 Updating & Maintenance
 
-## 📊 API Overview
-- `GET /api/projects` – Filter/search projects
-- `POST /api/recommend` – Personalized recommendations
-- `GET/POST/DELETE /api/bookmarks` – Manage bookmarks
-- `POST /api/github/fetch` – Fetch GitHub data
-- `POST /api/github/sync` – Sync trending projects
+### 1. Pull the Latest Code
+
+```bash
+git pull origin main
+```
+
+### 2. Update Backend Dependencies
+
+```bash
+cd backend
+go mod tidy
+```
+
+### 3. Update Frontend Dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+### 4. Apply Database Migrations (if any)
+
+- Check the `backend/database/` directory for migration scripts or instructions.
+- Run any provided migration commands as needed.
+
+### 5. Restart the Servers
+
+- **Backend:**
+  ```bash
+  cd backend
+  go run main.go
+  ```
+- **Frontend:**
+  ```bash
+  cd frontend
+  npm start
+  ```
+
+### 6. Update Environment Variables
+
+- If `.env.example` changes, update your local `.env` files accordingly.
+- Never commit real secrets to the repository.
+
+## 📊 API Endpoints
+
+### Projects
+- `GET /api/projects` - Search and filter projects
+- `POST /api/recommend` - Get personalized recommendations
+
+### Bookmarks
+- `GET /api/bookmarks` - Get user bookmarks
+- `POST /api/bookmarks` - Add bookmark
+- `DELETE /api/bookmarks` - Remove bookmark
+
+### GitHub Integration
+- `POST /api/github/fetch` - Fetch GitHub projects
+- `POST /api/github/sync` - Sync trending projects
+
+## 🧪 Testing
+
+### Backend Tests
+
+```bash
+cd backend
+go test ./...
+```
+
+### Frontend Tests
+
+```bash
+cd frontend
+npm test
+```
+
+## 📁 Project Structure
+
+```
+Open_Source_Project_Finder/
+├── backend/
+│   ├── config/          # Configuration files
+│   ├── controllers/     # HTTP handlers
+│   ├── database/        # Database connection
+│   ├── models/          # Data models
+│   ├── routes/          # API routes
+│   ├── services/        # Business logic
+│   └── main.go         # Entry point
+├── frontend/
+│   ├── public/          # Static files
+│   ├── src/
+│   │   ├── components/  # React components
+│   │   ├── pages/       # Page components
+│   │   ├── services/    # API services
+│   │   ├── context/     # React context
+│   │   └── styles/      # CSS files
+│   └── package.json
+└── README.md
+```
 
 ## 🤝 Contributing
 - Fork the repo
@@ -73,5 +269,12 @@ Visit: http://localhost:3000
 - Open a Pull Request
 
 ## 👨‍💻 Author
-Sachin Parihar  
-[GitHub](https://github.com/sachinparihar) • [LinkedIn](https://linkedin.com/in/sachin-parihar-937b3b237/)
+
+**Sachin Parihar**
+- GitHub: [@sachinparihar](https://github.com/sachinparihar)
+- LinkedIn: [Sachin Parihar](https://linkedin.com/in/sachinparihar)
+
+## 🙏 Acknowledgments
+
+- CNCF projects (Kubernetes, KubeSphere, OpenFunction) for inspiration
+- Open source community for continuous learning and collaboration
