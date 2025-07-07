@@ -72,9 +72,6 @@ Visit: http://localhost:3000
 - Commit and push
 - Open a Pull Request
 
-## 📝 License
-MIT – See the LICENSE file.
-
 ## 👨‍💻 Author
 Sachin Parihar  
 [GitHub](https://github.com/sachinparihar) • [LinkedIn](https://linkedin.com/in/sachin-parihar-937b3b237/)
