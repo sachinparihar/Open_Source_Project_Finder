@@ -1,6 +1,5 @@
 # Open Source Project Finder
-
-A Web Platform that makes it easy for developers to find and join active open source projects. The app matches users with projects based on their skills and interests, highlights project activity and helps contributors connect with the right opportunities.
+A platform that helps developers discover active, well-maintained open source projects tailored to their skills and interests. Features AI-powered recommendations, project activity scoring, and personalized matching to maximize successful contributions.
 
 ## 🚀 Features
 - AI-Powered Recommendations
@@ -11,141 +10,71 @@ A Web Platform that makes it easy for developers to find and join active open so
 - Auth0 Authentication
 
 ## 🛠️ Tech Stack
+- **Frontend:** React 19, Auth0, Axios, CSS
+- **Backend:** Go 1.24.2, Gorilla Mux, Azure Cosmos DB (MongoDB API), GitHub API, JWT
 
-### Frontend
-- React 19
-- React Router DOM
-- Auth0 Authentication
-- Axios for API calls
-- CSS for styling
+## 📦 Prerequisites
+- Node.js v16+
+- Go v1.24+
+- Azure Cosmos DB or MongoDB v4.4+
+- Git
 
-### Backend
-- Go 1.24.2
-- Gorilla Mux for routing
-- Azure Cosmos DB (MongoDB API) for database
-- GitHub API integration
-- JWT authentication
+## 🔧 Setup Instructions
 
-## ⚙️ Local Setup
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/sachinparihar/Open_Source_Project_Finder.git
+   cd Open_Source_Project_Finder
+   ```
+2. **Backend Setup**
+   ```bash
+   cd backend
+   go mod tidy
+   cp .env.example .env
+   # Add MongoDB URI, GitHub Token, and CORS config in .env
+   ```
+3. **Frontend Setup**
+   ```bash
+   cd frontend
+   npm install
+   cp .env.example .env
+   # Add API URL, Auth0 domain, and client ID in .env
+   ```
 
+## ▶️ Running the App
+**Start Backend**
 ```bash
-# Clone the repository
-git clone https://github.com/sachinparihar/Open_Source_Project_Finder.git
-cd Open_Source_Project_Finder
-
-# --------------------
-# Backend Setup
-# --------------------
 cd backend
-go mod tidy
-cp .env.example .env
-
-# Edit .env and add the following:
-# MONGODB_URI=your_mongodb_uri
-# GITHUB_TOKEN=your_github_token
-# PORT=8080
-# ALLOWED_ORIGINS=http://localhost:3000
-
-# Start backend server
 go run main.go
-
-# --------------------
-# Frontend Setup (in a new terminal or after backend is running)
-# --------------------
-cd ../frontend
-npm install
-cp .env.example .env
-
-# Edit .env and add the following:
-# REACT_APP_API_URL=http://localhost:8080
-# REACT_APP_AUTH0_DOMAIN=your_auth0_domain
-# REACT_APP_AUTH0_CLIENT_ID=your_auth0_client_id
-
-# Start frontend
+```
+**Start Frontend**
+```bash
+cd frontend
 npm start
 ```
+Visit: http://localhost:3000
 
-## 📋 Prerequisites
 
-- **Node.js** (v16 or higher)
-- **Go** (v1.24 or higher)
-- **MongoDB** or **Azure Cosmos DB**
-- **GitHub Personal Access Token**
-- **Auth0 Account**
+![home](https://github.com/user-attachments/assets/ede87542-6669-43ca-ad17-27836a9db534)
 
-## 🔧 Environment Setup
 
-### GitHub Token
-1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
-2. Generate a new token with `repo` and `read:user` permissions
 
-### Auth0 Setup
-1. Create an account at [Auth0](https://auth0.com/)
-2. Create a new application (Single Page Application)
-3. Configure allowed callback URLs: `http://localhost:3000`
-
-### Database Setup
-- **Option 1**: Azure Cosmos DB (MongoDB API)
-- **Option 2**: Local MongoDB: `docker run -d -p 27017:27017 --name mongodb mongo:latest`
-
-## 📊 API Endpoints
-
-### Projects
-- `GET /api/projects` - Search and filter projects
-- `POST /api/recommend` - Get personalized recommendations
-
-### Bookmarks
-- `GET /api/bookmarks` - Get user bookmarks
-- `POST /api/bookmarks` - Add bookmark
-- `DELETE /api/bookmarks` - Remove bookmark
-
-### GitHub Integration
-- `POST /api/github/fetch` - Fetch GitHub projects
-- `POST /api/github/sync` - Sync trending projects
-
-## 📁 Project Structure
-
-```
-Open_Source_Project_Finder/
-├── backend/
-│   ├── config/          # Configuration files
-│   ├── controllers/     # HTTP handlers
-│   ├── database/        # Database connection
-│   ├── models/          # Data models
-│   ├── routes/          # API routes
-│   ├── services/        # Business logic
-│   └── main.go         # Entry point
-├── frontend/
-│   ├── public/          # Static files
-│   ├── src/
-│   │   ├── components/  # React components
-│   │   ├── pages/       # Page components
-│   │   ├── services/    # API services
-│   │   ├── context/     # React context
-│   │   └── styles/      # CSS files
-│   └── package.json
-└── README.md
-```
+## 📊 API Overview
+- `GET /api/projects` – Filter/search projects
+- `POST /api/recommend` – Personalized recommendations
+- `GET/POST/DELETE /api/bookmarks` – Manage bookmarks
+- `POST /api/github/fetch` – Fetch GitHub data
+- `POST /api/github/sync` – Sync trending projects
 
 ## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- Fork the repo
+- Create a branch: `git checkout -b feature/your-feature`
+- Commit and push
+- Open a Pull Request
 
 ## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT – See the LICENSE file.
 
 ## 👨‍💻 Author
-
-**Sachin Parihar**
-- GitHub: [@sachinparihar](https://github.com/sachinparihar)
-- LinkedIn: [Sachin Parihar](https://linkedin.com/in/sachin-parihar-937b3b237/)
-
-## 🙏 Acknowledgments
-
-- CNCF projects (Kubernetes, KubeSphere, Knative, Dapr) for inspiration
-- Open source community for continuous learning and collaboration
+Sachin Parihar  
+[GitHub](https://github.com/sachinparihar) • [LinkedIn](https://linkedin.com/in/sachin-parihar-937b3b237/)
