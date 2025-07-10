@@ -114,14 +114,14 @@
 }
 
 .cta-button.secondary {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(253, 4, 141);
   color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgb();
   backdrop-filter: blur(10px);
 }
 
 .cta-button.secondary:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(206, 3, 115);
   transform: translateY(-2px);
 }
 
