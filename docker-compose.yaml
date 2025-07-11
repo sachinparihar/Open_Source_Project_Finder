@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: osproject-backend
+    image: sachinparihar/osproject-backend:latest
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: osproject-frontend
+    image: sachinparihar/osproject-frontend:latest
+    depends_on:
+      - backend
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "3000:80"
+    restart: unless-stopped

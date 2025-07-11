@@ -30,8 +30,8 @@ A platform that helps developers discover active, well-maintained open source pr
    ```bash
    cd backend
    go mod tidy
-   cp .env.example .env
-   # Add MongoDB URI, GitHub Token, and CORS config in .env
+   # Create .env file with your Azure Cosmos DB connection string
+   # See backend/ENVIRONMENT_SETUP.md for detailed instructions
    ```
 3. **Frontend Setup**
    ```bash
@@ -46,6 +46,8 @@ A platform that helps developers discover active, well-maintained open source pr
 ```bash
 cd backend
 go run main.go
+# Test database connection:
+go run cmd/test_db/main.go
 ```
 **Start Frontend**
 ```bash
