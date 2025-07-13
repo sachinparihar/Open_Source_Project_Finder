@@ -108,6 +108,8 @@ npm start
 
 Visit: http://localhost:3000
 
+<img width="1545" height="1011" alt="home" src="https://github.com/user-attachments/assets/4c60d698-cb99-40bb-a41e-9b9649db5ac1" />
+
 ## 🐳 Docker Configuration
 
 ### Backend Container
