@@ -156,9 +156,6 @@ REACT_APP_AUTH0_CLIENT_ID=your-auth0-client-id
 - Commit and push
 - Open a Pull Request
 
-## 📝 License
-MIT – See the LICENSE file.
-
 ## 👨‍💻 Author
 Sachin Parihar  
 [GitHub](https://github.com/sachinparihar) • [LinkedIn](https://linkedin.com/in/sachin-parihar-937b3b237/)
